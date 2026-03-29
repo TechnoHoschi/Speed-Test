@@ -47,8 +47,9 @@
 */
 
      // Add or Remove Server --> Automatically choose the one with the least latency
+     // Paths are absolute so the frontend works from any subdirectory (e.g. /speedtest/)
     var openSpeedTestServerList = [
-        {"ServerName":"Home", "Download":"downloading", "Upload":"upload", "ServerIcon":"DefaultIcon"}
+        {"ServerName":"Home", "Download":"/downloading", "Upload":"/upload", "ServerIcon":"DefaultIcon"}
       ];
           
     // Send pings 'pingSamples' times to each Server URL.
