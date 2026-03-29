@@ -5,21 +5,18 @@
 # Aufruf: sh speedtest-setup.sh
 
 DL_FILE="/tmp/downloading"
-UL_FILE="/tmp/upload"
-DL_SIZE_MB=50
 WWW_DIR="/www"
+DL_SIZE_MB=50
 
 echo "[*] Erzeuge ${DL_SIZE_MB}MB Download-Testdatei in ${DL_FILE} ..."
 dd if=/dev/urandom of="$DL_FILE" bs=1048576 count=$DL_SIZE_MB
 echo "[+] ${DL_FILE} angelegt: $(du -sh $DL_FILE | cut -f1)"
 
-echo "[*] Erzeuge leere Upload-Sink-Datei ${UL_FILE} ..."
-: > "$UL_FILE"
-echo "[+] ${UL_FILE} angelegt."
-
 echo "[*] Erstelle Symlinks in ${WWW_DIR} ..."
+# Download: echte 50MB Datei aus /tmp (RAM)
 ln -sf "$DL_FILE" "${WWW_DIR}/downloading"
-ln -sf "$UL_FILE" "${WWW_DIR}/upload"
+# Upload: /dev/null als Sink - kein IO, kein Write-Contention, kein Flash-Verbrauch
+ln -sf /dev/null "${WWW_DIR}/upload"
 echo "[+] Symlinks:"
 ls -la "${WWW_DIR}/downloading" "${WWW_DIR}/upload"
 
