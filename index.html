@@ -35,7 +35,7 @@
     // downloading.cgi: streams 50MB from /dev/zero on-the-fly (RAM only)
     // upload.cgi:      POST body -> /dev/null | GET -> "OK" (ping)
     var openSpeedTestServerList = [
-        {"ServerName":"Home", "Download":"downloading.cgi", "Upload":"upload.cgi", "ServerIcon":"DefaultIcon"}
+        {"ServerName":"Home", "Download":"/cgi-bin/downloading.cgi", "Upload":"/cgi-bin/upload.cgi", "ServerIcon":"DefaultIcon"}
       ];
 
         var pingSamples = 10;
@@ -45,7 +45,7 @@
         var setPingTimeout = true;
         var pingMethod = "GET";
         var pingFile = "Upload";
-        var ulDataSize = 30;
+        var ulDataSize = 20480;
         var ulDelay = 300;
         var dlDelay = 300;
         var upAdjust = 1.04;
