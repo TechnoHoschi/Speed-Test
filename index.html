@@ -32,7 +32,7 @@
 */
 
     // PATCH: CGI-based endpoints, no static files, no symlinks, no setup needed
-    // downloading.cgi: streams 50MB from /dev/zero on-the-fly (RAM only)
+    // downloading.cgi: streams 30MB from /dev/zero on-the-fly (RAM only)
     // upload.cgi:      POST body -> /dev/null | GET -> "OK" (ping)
     var openSpeedTestServerList = [
         {"ServerName":"Home", "Download":"/cgi-bin/downloading.cgi", "Upload":"/cgi-bin/upload.cgi", "ServerIcon":"DefaultIcon"}
@@ -45,7 +45,7 @@
         var setPingTimeout = true;
         var pingMethod = "GET";
         var pingFile = "Upload";
-        var ulDataSize = 50;
+        var ulDataSize = 30;
         var ulDelay = 300;
         var dlDelay = 300;
         var upAdjust = 1.04;
