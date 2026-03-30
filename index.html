@@ -20,6 +20,21 @@
   <meta name="msapplication-TileColor" content="#ffc40d">
   <meta name="msapplication-config" content="assets/images/icons/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
+  <style>
+    #icmp-ping {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: rgba(0,0,0,0.75);
+      color: #00cfff;
+      font-family: sans-serif;
+      font-size: 13px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
   <script type="text/javascript">
@@ -32,8 +47,9 @@
 */
 
     // PATCH: CGI-based endpoints, no static files, no symlinks, no setup needed
-    // downloading.cgi: streams 30MB from /dev/zero on-the-fly (RAM only)
+    // downloading.cgi: streams 20MB from /dev/zero on-the-fly (RAM only)
     // upload.cgi:      POST body -> /dev/null | GET -> "OK" (ping)
+    // ping.cgi:        ICMP ping to REMOTE_ADDR, returns avg RTT
     var openSpeedTestServerList = [
         {"ServerName":"Home", "Download":"/cgi-bin/downloading.cgi", "Upload":"/cgi-bin/upload.cgi", "ServerIcon":"DefaultIcon"}
       ];
@@ -84,8 +100,19 @@ function ostOnload() {
     <p style="font-size: 12px;">&copy; Copyright 2013-2024 OpenSpeedTest™ All Rights Reserved.</p>
   </div>
 
+  <div id="icmp-ping">ICMP Ping: ...</div>
+
   <script src="assets/js/app-2.5.4.min.js"></script>
   <script src="assets/js/darkmode.js"></script>
-
+  <script>
+    fetch('/cgi-bin/ping.cgi')
+      .then(r => r.text())
+      .then(t => {
+        document.getElementById('icmp-ping').textContent = 'ICMP Ping: ' + t + ' ms';
+      })
+      .catch(() => {
+        document.getElementById('icmp-ping').textContent = 'ICMP Ping: N/A';
+      });
+  </script>
 </body>
 </html>
