@@ -31,12 +31,11 @@
      Read full license terms @ http://go.openspeedtest.com/License
 */
 
-    // PATCH: relative paths, self-contained under /www/speedtest/
-    // Download: /www/speedtest/downloading -> /tmp/downloading (50MB, RAM)
-    // Upload:   /www/speedtest/upload.cgi  (CGI: reads POST body, discards, returns OK)
-    // Ping:     GET against upload.cgi     (returns "OK" instantly, clean RTT)
+    // PATCH: CGI-based endpoints, no static files, no symlinks, no setup needed
+    // downloading.cgi: streams 50MB from /dev/zero on-the-fly (RAM only)
+    // upload.cgi:      POST body -> /dev/null | GET -> "OK" (ping)
     var openSpeedTestServerList = [
-        {"ServerName":"Home", "Download":"downloading", "Upload":"upload.cgi", "ServerIcon":"DefaultIcon"}
+        {"ServerName":"Home", "Download":"downloading.cgi", "Upload":"upload.cgi", "ServerIcon":"DefaultIcon"}
       ];
 
         var pingSamples = 10;
