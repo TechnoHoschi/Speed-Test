@@ -1,29 +1,33 @@
 #!/bin/sh
 # speedtest-setup.sh - OpenSpeedTest Setup fuer OpenWrt
+# Alles self-contained unter /www/speedtest/ - kein Eingriff in LuCI-Webroot
 # Aufruf: sh speedtest-setup.sh
 
 DL_SIZE_MB=50
-WWW_DIR="/www"
+SPEEDTEST_DIR="/www/speedtest"
 
-# Download: 50MB aus /dev/urandom nach /tmp
+# Sicherstellen dass /www/speedtest existiert
+if [ ! -d "$SPEEDTEST_DIR" ]; then
+    echo "[!] ${SPEEDTEST_DIR} existiert nicht - bitte zuerst Frontend-Dateien deployen!"
+    echo "    scp -r assets index.html root@<router-ip>:/www/speedtest/"
+    exit 1
+fi
+
+# Download: 50MB aus /dev/urandom nach /tmp (RAM)
 echo "[*] Erzeuge ${DL_SIZE_MB}MB Download-Testdatei ..."
 dd if=/dev/urandom of=/tmp/downloading bs=1048576 count=$DL_SIZE_MB
 echo "[+] /tmp/downloading: $(du -sh /tmp/downloading | cut -f1)"
 
-# Upload: /dev/null als Sink - kein IO, kein Write-Contention
-echo "[*] Setze Upload-Sink ..."
-ln -sf /dev/null "${WWW_DIR}/upload"
-
-# Ping: winzige 3-Byte Datei fuer saubere RTT-Messung
-# Das JS pingt gegen 'Upload' (GET) - wir zeigen ihm diese kleine Datei
+# Ping/Upload-Sink: winzige 3-Byte Datei fuer saubere RTT-Messung
+# Upload-POST landet hier ebenfalls - Inhalt wird einfach ignoriert/ueberschrieben
 echo "OK" > /tmp/ping
-ln -sf /tmp/ping "${WWW_DIR}/upload"
 
-# Download-Symlink
-ln -sf /tmp/downloading "${WWW_DIR}/downloading"
-
+# Symlinks self-contained in /www/speedtest/
+echo "[*] Erstelle Symlinks in ${SPEEDTEST_DIR} ..."
+ln -sf /tmp/downloading "${SPEEDTEST_DIR}/downloading"
+ln -sf /tmp/ping        "${SPEEDTEST_DIR}/upload"
 echo "[+] Symlinks:"
-ls -la "${WWW_DIR}/downloading" "${WWW_DIR}/upload"
+ls -la "${SPEEDTEST_DIR}/downloading" "${SPEEDTEST_DIR}/upload"
 
 # uhttpd follow_symlinks sicherstellen
 echo ""
