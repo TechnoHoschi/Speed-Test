@@ -48,19 +48,20 @@
 
     // Add or Remove Server --> Automatically choose the one with the least latency
     // PATCH: absolute paths so frontend works from /speedtest/ subdirectory
+    // PATCH: separate Upload endpoint (/upload) and dedicated Ping endpoint (/ping, 3 bytes)
     var openSpeedTestServerList = [
         {"ServerName":"Home", "Download":"/downloading", "Upload":"/upload", "ServerIcon":"DefaultIcon"}
       ];
 
     var pingSamples = 10;
-        var jitterFinalSample = 0.5; 
+        var jitterFinalSample = 0.5;
         var setPingSamples = true;
-        var pingTimeOut = 5000; 
+        var pingTimeOut = 5000;
         var setPingTimeout = true;
 
-    // PATCH: HEAD against /downloading - no body transfer, clean RTT, no write contention
-        var pingMethod = "HEAD";
-        var pingFile = "Download";
+    // PATCH: GET against tiny /ping file (3 bytes) - fast RTT, no body overhead, no contention
+        var pingMethod = "GET";
+        var pingFile = "Upload";  // JS uses Upload slot URL but we point Upload to /ping
 
         var ulDataSize = 30;
         var ulDelay = 300;
