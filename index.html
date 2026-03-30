@@ -25,17 +25,18 @@
   <script type="text/javascript">
 /*
      Official Website : https://OpenSpeedTest.COM | Email: support@openspeedtest.com
-     Developed by : Vishnu | https://Vishnu.Pro | Email : me@vishnu.pro 
+     Developed by : Vishnu | https://Vishnu.Pro | Email : me@vishnu.pro
 
      Speed Test by OpenSpeedTest™️ is Free and Open-Source Software (FOSS) with MIT License.
      Read full license terms @ http://go.openspeedtest.com/License
 */
 
-    // PATCH: relative paths - all endpoints self-contained under /www/speedtest/
-    // Symlinks: /www/speedtest/downloading -> /tmp/downloading (50MB)
-    //           /www/speedtest/upload      -> /tmp/ping (3 bytes, ping + upload sink)
+    // PATCH: relative paths, self-contained under /www/speedtest/
+    // Download: /www/speedtest/downloading -> /tmp/downloading (50MB, RAM)
+    // Upload:   /www/speedtest/upload.cgi  (CGI: reads POST body, discards, returns OK)
+    // Ping:     GET against upload.cgi     (returns "OK" instantly, clean RTT)
     var openSpeedTestServerList = [
-        {"ServerName":"Home", "Download":"downloading", "Upload":"upload", "ServerIcon":"DefaultIcon"}
+        {"ServerName":"Home", "Download":"downloading", "Upload":"upload.cgi", "ServerIcon":"DefaultIcon"}
       ];
 
         var pingSamples = 10;
