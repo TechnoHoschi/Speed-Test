@@ -8,6 +8,19 @@ Die eigentliche Arbeit hat größtenteils eine KI erledigt. Der Mensch hat prim�
 
 ---
 
+## Was wird hier eigentlich gemessen?
+
+> ⚠️ **Wichtig:** Dieser Speedtest misst die Geschwindigkeit zwischen dem Client (Browser) und der **LAN-Schnittstelle des Routers** – **nicht** die Internetgeschwindigkeit.
+
+Das ist kein Bug, sondern der Sinn der Sache. Du misst damit:
+- Die Leistung deines LAN/WLAN-Links zum Router
+- Den Durchsatz des Router-SoC beim Streamen/Empfangen
+- Ob dein Switch, dein Patchkabel oder deine WLAN-Verbindung der Flaschenhals ist
+
+Für einen WAN-Speedtest (Internet) nimm [fast.com](https://fast.com) oder [speedtest.net](https://speedtest.net).
+
+---
+
 ## Was wurde geändert?
 
 | Original | Dieser Fork |
@@ -59,7 +72,7 @@ Der einfachste Weg – holt alles auf einmal inkl. `assets/` (CSS, JS, Fonts, Im
 
 ```sh
 cd /www
-git clone https://github.com/TechnoHoschi/Speed-Test.git speedtest
+git clone https://github.com/TechnoHoschi/openspeedtest-openwrt.git speedtest
 ```
 
 ### CGIs an Ort und Stelle bringen
