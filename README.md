@@ -1,6 +1,6 @@
 # OpenSpeedTest – OpenWrt / uhttpd CGI Fork
 
-> **TL;DR:** OpenSpeedTest ohne NGINX, ohne Docker, ohne statische Download-Dateien – läuft direkt auf OpenWrt via uhttpd und zwei Shell-CGIs. Weil manchmal muss es einfach der Router selbst richten.
+> **TL;DR:** OpenSpeedTest ohne NGINX, ohne Docker, ohne statische Download-Dateien – läuft direkt auf OpenWrt via uhttpd und drei Shell-CGIs. Weil manchmal muss es einfach der Router selbst richten.
 
 Dieses Repository ist ein Fork von [OpenSpeedTest™](https://openspeedtest.com) und wurde für den Betrieb auf **OpenWrt mit uhttpd** angepasst. Das Original setzt NGINX oder Docker voraus. Beides ist auf einem Router-SoC entweder nicht verfügbar oder eine schlechte Idee.
 
@@ -16,7 +16,6 @@ Die eigentliche Arbeit hat größtenteils eine KI erledigt. Der Mensch hat prim�
 | Statische Download-Dateien | `downloading.cgi` streamt aus `/dev/zero` (kein Flash-Verschleiß) |
 | Upload via Static-File-POST | `upload.cgi` verwirft Body via `dd` nach exakt `CONTENT_LENGTH` Bytes |
 | Kein ICMP-Ping | `ping.cgi` pingt den Client via `$REMOTE_ADDR` und gibt echte RTT zurück |
-| CGIs in `/cgi-bin/` | CGIs in `/www/cgi-bin/` mit `cgi_prefix=/cgi-bin` |
 | Frontend in docroot | Frontend in `/www/speedtest/`, Endpoints absolut via `/cgi-bin/` referenziert |
 
 ---
@@ -41,9 +40,10 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 ### Voraussetzungen
 
 ```sh
-opkg update
-opkg install uhttpd uhttpd-mod-ucode
+opkg update && opkg install uhttpd
 ```
+
+> `cgi_prefix=/cgi-bin` ist OpenWrt-Default – da muss nichts verbogen werden. LuCI bleibt unangetastet.
 
 ### CGIs deployen
 
@@ -57,20 +57,14 @@ wget -O /www/speedtest/index.html https://raw.githubusercontent.com/TechnoHoschi
 wget -O /www/cgi-bin/downloading.cgi https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/downloading.cgi
 wget -O /www/cgi-bin/upload.cgi https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/upload.cgi
 wget -O /www/cgi-bin/ping.cgi https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/ping.cgi
-chmod +x /www/cgi-bin/*.cgi
+
+# Nur unsere eigenen CGIs executable machen - LuCI nicht anfassen!
+chmod +x /www/cgi-bin/downloading.cgi /www/cgi-bin/upload.cgi /www/cgi-bin/ping.cgi
 ```
 
-### Assets deployen
+### uhttpd Timeouts anpassen
 
 ```sh
-# assets/ Verzeichnis aus dem Repo ins Frontend kopieren
-# (per scp, wget oder git clone)
-```
-
-### uhttpd konfigurieren
-
-```sh
-uci set uhttpd.main.cgi_prefix='/cgi-bin'
 uci set uhttpd.main.network_timeout='120'
 uci set uhttpd.main.script_timeout='120'
 uci set uhttpd.main.max_requests='20'
@@ -81,7 +75,7 @@ service uhttpd restart
 ### Aufrufen
 
 ```
-http://<router-ip>/speedtest/index.html
+http://<router-ip>/speedtest/
 ```
 
 ---
@@ -90,7 +84,7 @@ http://<router-ip>/speedtest/index.html
 
 - **Ping-Anzeige im Framework (~60ms):** Das OpenSpeedTest-JS misst Ping via XHR-Roundtrip, nicht via ICMP. Der Browser-Stack addiert ~55ms Overhead. Der echte LAN-Ping (unten rechts als ICMP-Overlay) ist deutlich realistischer.
 - **NS_BINDING_ABORTED im Browser-Log:** Normal. Das JS bricht Download/Upload-Requests nach Ablauf der Messdauer absichtlich ab.
-- **LuCI läuft parallel:** Solange `uhttpd-mod-ucode` installiert ist, verträgt sich `cgi_prefix=/cgi-bin` problemlos mit LuCI. Falls nicht – `opkg install uhttpd-mod-ucode` rettet den Tag.
+- **LuCI läuft parallel:** Solange `cgi_prefix=/cgi-bin` der Default bleibt und wir keine fremden Dateien anpacken, koexistieren LuCI und der Speedtest ohne Probleme.
 
 ---
 
