@@ -4,7 +4,7 @@
 
 Dieses Repository ist ein Fork von [OpenSpeedTest™](https://openspeedtest.com) und wurde für den Betrieb auf **OpenWrt mit uhttpd** angepasst. Das Original setzt NGINX oder Docker voraus. Beides ist auf einem Router-SoC entweder nicht verfügbar oder eine schlechte Idee.
 
-Die eigentliche Arbeit hat größtenteils eine KI erledigt. Der Mensch hat primär auf den "Deploy"-Button gedrückt, Kaffee getrunken und gelegentlich den Browser-Tab neu geladen. Klassisches Vibecoding – aber es funktioniert.
+Die eigentliche Arbeit hat größtenteils eine KI erledigt. Der Mensch hat primär auf den "Deploy"-Button gedrückt, Kaffee getrunken und gelegentlich den Browser-Tab neu geladen. Klassisches Vibecoding – aber es funktioniert. Kommentar: Das wäre zu schön gewesen, Debugging und der KI auf die Sprünge zu helfen, wenn sie vom Weg abgekommen ist, sind zu unterschätzen. ;)
 
 ---
 
