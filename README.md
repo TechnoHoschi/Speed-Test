@@ -52,7 +52,7 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 
 ### Voraussetzungen
 
-`wget` ist auf OpenWrt standardmäßig vorhanden – keine zusätzlichen Pakete nötig.
+`wget` und `unzip` sind auf OpenWrt standardmäßig verfügbar – keine zusätzlichen Pakete nötig.
 
 > `cgi_prefix=/cgi-bin` ist OpenWrt-Default – da muss nichts verbogen werden. LuCI bleibt unangetastet.
 
@@ -62,35 +62,22 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 [ -d /www/cgi-bin ] || { echo "ERROR: /www/cgi-bin nicht gefunden. uhttpd korrekt konfiguriert?"; exit 1; }
 ```
 
-Wenn dieser Check fehlschlägt: nicht einfach den Ordner anlegen. Erst prüfen ob uhttpd läuft und `cgi_prefix` gesetzt ist (`uci get uhttpd.main.cgi_prefix`).
-
-### Frontend + Assets deployen
+### Deployen
 
 ```sh
-BASE="https://raw.githubusercontent.com/TechnoHoschi/openspeedtest-openwrt/main"
-DEST="/www/speedtest"
+cd /tmp
+wget -O openspeedtest.zip https://github.com/TechnoHoschi/openspeedtest-openwrt/archive/refs/heads/main.zip
+unzip openspeedtest.zip
+mv openspeedtest-openwrt-main /www/speedtest
 
-mkdir -p "$DEST/assets/css" "$DEST/assets/js" "$DEST/assets/fonts" "$DEST/assets/images/icons"
-
-wget -O "$DEST/index.html"                        "$BASE/index.html"
-wget -O "$DEST/assets/css/app.css"                "$BASE/assets/css/app.css"
-wget -O "$DEST/assets/css/darkmode.css"           "$BASE/assets/css/darkmode.css"
-wget -O "$DEST/assets/js/app-2.5.4.min.js"        "$BASE/assets/js/app-2.5.4.min.js"
-wget -O "$DEST/assets/js/darkmode.js"             "$BASE/assets/js/darkmode.js"
-wget -O "$DEST/assets/images/app.svg"             "$BASE/assets/images/app.svg"
-```
-
-> Fonts und weitere Icons bei Bedarf analog ergänzen. Der Speedtest läuft auch ohne Fonts, sieht dann halt etwas... rustikal aus.
-
-### CGIs deployen
-
-```sh
-wget -O /www/cgi-bin/downloading.cgi "$BASE/downloading.cgi"
-wget -O /www/cgi-bin/upload.cgi      "$BASE/upload.cgi"
-wget -O /www/cgi-bin/ping.cgi        "$BASE/ping.cgi"
-
-# Nur unsere eigenen CGIs executable machen - LuCI nicht anfassen!
+# CGIs ins richtige Verzeichnis
+cp /www/speedtest/downloading.cgi /www/cgi-bin/
+cp /www/speedtest/upload.cgi      /www/cgi-bin/
+cp /www/speedtest/ping.cgi        /www/cgi-bin/
 chmod +x /www/cgi-bin/downloading.cgi /www/cgi-bin/upload.cgi /www/cgi-bin/ping.cgi
+
+# Aufräumen
+rm /tmp/openspeedtest.zip
 ```
 
 ### uhttpd Timeouts anpassen
@@ -111,13 +98,10 @@ http://<router-ip>/speedtest/
 
 ### Updates
 
-```sh
-BASE="https://raw.githubusercontent.com/TechnoHoschi/openspeedtest-openwrt/main"
+Installation wiederholen – bestehende `/www/speedtest` vorher löschen:
 
-wget -O /www/speedtest/index.html          "$BASE/index.html"
-wget -O /www/cgi-bin/downloading.cgi       "$BASE/downloading.cgi"
-wget -O /www/cgi-bin/upload.cgi            "$BASE/upload.cgi"
-wget -O /www/cgi-bin/ping.cgi              "$BASE/ping.cgi"
+```sh
+rm -rf /www/speedtest
 ```
 
 ---
