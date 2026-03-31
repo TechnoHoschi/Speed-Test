@@ -52,9 +52,7 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 
 ### Voraussetzungen
 
-```sh
-opkg update && opkg install uhttpd git git-http
-```
+`wget` ist auf OpenWrt standardmäßig vorhanden – keine zusätzlichen Pakete nötig.
 
 > `cgi_prefix=/cgi-bin` ist OpenWrt-Default – da muss nichts verbogen werden. LuCI bleibt unangetastet.
 
@@ -66,21 +64,30 @@ opkg update && opkg install uhttpd git git-http
 
 Wenn dieser Check fehlschlägt: nicht einfach den Ordner anlegen. Erst prüfen ob uhttpd läuft und `cgi_prefix` gesetzt ist (`uci get uhttpd.main.cgi_prefix`).
 
-### Repo klonen
-
-Der einfachste Weg – holt alles auf einmal inkl. `assets/` (CSS, JS, Fonts, Images):
+### Frontend + Assets deployen
 
 ```sh
-cd /www
-git clone https://github.com/TechnoHoschi/openspeedtest-openwrt.git speedtest
+BASE="https://raw.githubusercontent.com/TechnoHoschi/openspeedtest-openwrt/main"
+DEST="/www/speedtest"
+
+mkdir -p "$DEST/assets/css" "$DEST/assets/js" "$DEST/assets/fonts" "$DEST/assets/images/icons"
+
+wget -O "$DEST/index.html"                        "$BASE/index.html"
+wget -O "$DEST/assets/css/app.css"                "$BASE/assets/css/app.css"
+wget -O "$DEST/assets/css/darkmode.css"           "$BASE/assets/css/darkmode.css"
+wget -O "$DEST/assets/js/app-2.5.4.min.js"        "$BASE/assets/js/app-2.5.4.min.js"
+wget -O "$DEST/assets/js/darkmode.js"             "$BASE/assets/js/darkmode.js"
+wget -O "$DEST/assets/images/app.svg"             "$BASE/assets/images/app.svg"
 ```
 
-### CGIs an Ort und Stelle bringen
+> Fonts und weitere Icons bei Bedarf analog ergänzen. Der Speedtest läuft auch ohne Fonts, sieht dann halt etwas... rustikal aus.
+
+### CGIs deployen
 
 ```sh
-cp /www/speedtest/downloading.cgi /www/cgi-bin/
-cp /www/speedtest/upload.cgi /www/cgi-bin/
-cp /www/speedtest/ping.cgi /www/cgi-bin/
+wget -O /www/cgi-bin/downloading.cgi "$BASE/downloading.cgi"
+wget -O /www/cgi-bin/upload.cgi      "$BASE/upload.cgi"
+wget -O /www/cgi-bin/ping.cgi        "$BASE/ping.cgi"
 
 # Nur unsere eigenen CGIs executable machen - LuCI nicht anfassen!
 chmod +x /www/cgi-bin/downloading.cgi /www/cgi-bin/upload.cgi /www/cgi-bin/ping.cgi
@@ -105,8 +112,12 @@ http://<router-ip>/speedtest/
 ### Updates
 
 ```sh
-cd /www/speedtest && git pull
-cp downloading.cgi upload.cgi ping.cgi /www/cgi-bin/
+BASE="https://raw.githubusercontent.com/TechnoHoschi/openspeedtest-openwrt/main"
+
+wget -O /www/speedtest/index.html          "$BASE/index.html"
+wget -O /www/cgi-bin/downloading.cgi       "$BASE/downloading.cgi"
+wget -O /www/cgi-bin/upload.cgi            "$BASE/upload.cgi"
+wget -O /www/cgi-bin/ping.cgi              "$BASE/ping.cgi"
 ```
 
 ---
