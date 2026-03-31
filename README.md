@@ -40,23 +40,34 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 ### Voraussetzungen
 
 ```sh
-opkg update && opkg install uhttpd
+opkg update && opkg install uhttpd git git-http
 ```
 
 > `cgi_prefix=/cgi-bin` ist OpenWrt-Default – da muss nichts verbogen werden. LuCI bleibt unangetastet.
 
-### CGIs deployen
+### Sicherstellen dass `/www/cgi-bin` existiert
 
 ```sh
-mkdir -p /www/speedtest /www/cgi-bin
+[ -d /www/cgi-bin ] || { echo "ERROR: /www/cgi-bin nicht gefunden. uhttpd korrekt konfiguriert?"; exit 1; }
+```
 
-# Frontend
-wget -O /www/speedtest/index.html https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/index.html
+Wenn dieser Check fehlschlägt: nicht einfach den Ordner anlegen. Erst prüfen ob uhttpd läuft und `cgi_prefix` gesetzt ist (`uci get uhttpd.main.cgi_prefix`).
 
-# CGIs
-wget -O /www/cgi-bin/downloading.cgi https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/downloading.cgi
-wget -O /www/cgi-bin/upload.cgi https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/upload.cgi
-wget -O /www/cgi-bin/ping.cgi https://raw.githubusercontent.com/TechnoHoschi/Speed-Test/main/ping.cgi
+### Repo klonen
+
+Der einfachste Weg – holt alles auf einmal inkl. `assets/` (CSS, JS, Fonts, Images):
+
+```sh
+cd /www
+git clone https://github.com/TechnoHoschi/Speed-Test.git speedtest
+```
+
+### CGIs an Ort und Stelle bringen
+
+```sh
+cp /www/speedtest/downloading.cgi /www/cgi-bin/
+cp /www/speedtest/upload.cgi /www/cgi-bin/
+cp /www/speedtest/ping.cgi /www/cgi-bin/
 
 # Nur unsere eigenen CGIs executable machen - LuCI nicht anfassen!
 chmod +x /www/cgi-bin/downloading.cgi /www/cgi-bin/upload.cgi /www/cgi-bin/ping.cgi
@@ -76,6 +87,13 @@ service uhttpd restart
 
 ```
 http://<router-ip>/speedtest/
+```
+
+### Updates
+
+```sh
+cd /www/speedtest && git pull
+cp downloading.cgi upload.cgi ping.cgi /www/cgi-bin/
 ```
 
 ---
