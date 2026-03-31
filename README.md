@@ -52,7 +52,7 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 
 ### Voraussetzungen
 
-`wget` und `unzip` sind auf OpenWrt standardmäßig verfügbar – keine zusätzlichen Pakete nötig.
+`wget` und `tar` sind auf OpenWrt standardmäßig verfügbar – keine zusätzlichen Pakete nötig.
 
 > `cgi_prefix=/cgi-bin` ist OpenWrt-Default – da muss nichts verbogen werden. LuCI bleibt unangetastet.
 
@@ -66,8 +66,8 @@ Das läuft nicht auf jedem OpenWrt-Router. Ein GL.iNet AR300M mit 64MB RAM und M
 
 ```sh
 cd /tmp
-wget -O openspeedtest.zip https://github.com/TechnoHoschi/openspeedtest-openwrt/archive/refs/heads/main.zip
-unzip openspeedtest.zip
+wget -O openspeedtest.tar.gz https://github.com/TechnoHoschi/openspeedtest-openwrt/archive/refs/heads/main.tar.gz
+tar -xzf openspeedtest.tar.gz
 mv openspeedtest-openwrt-main /www/speedtest
 
 # CGIs ins richtige Verzeichnis
@@ -77,7 +77,7 @@ cp /www/speedtest/ping.cgi        /www/cgi-bin/
 chmod +x /www/cgi-bin/downloading.cgi /www/cgi-bin/upload.cgi /www/cgi-bin/ping.cgi
 
 # Aufräumen
-rm /tmp/openspeedtest.zip
+rm /tmp/openspeedtest.tar.gz
 ```
 
 ### uhttpd Timeouts anpassen
